@@ -1,10 +1,14 @@
 import styled from "styled-components";
+import { useForm } from "react-hook-form";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import Input from "../../ui/Input";
 import Form from "../../ui/Form";
 import Button from "../../ui/Button";
 import FileInput from "../../ui/FileInput";
 import Textarea from "../../ui/Textarea";
+import { createCabin } from "../../services/apiCabins";
+import toast from "react-hot-toast";
 
 const FormRow = styled.div`
   display: grid;
@@ -43,35 +47,78 @@ const Error = styled.span`
 `;
 
 function CreateCabinForm() {
+
+  const { register, handleSubmit, reset, getValues, formState } = useForm();
+
+  const {errors} = formState;
+
+  console.log(errors);
+  
+
+  const queryClient = useQueryClient();
+
+  const { mutate, isloading: isCreating } = useMutation({
+    mutationFn: createCabin,
+    onSuccess: () => {
+      toast.success("New cabin succsesfully genrated");
+      queryClient.invalidateQueries({ queryKey: ["Cabins"] });
+      reset();
+    },
+    onError: (err) => toast.error(err.message),
+
+  });
+
+  function onsubmit(data) {
+    mutate(data);
+  }
+
+  function onError(error) {
+    console.log(error);
+
+  }
+
   return (
-    <Form>
+    <Form onSubmit={handleSubmit(onsubmit, onError)}>
       <FormRow>
-        <label class="mb-0"htmlFor="name">Cabin name</Label>
-        <Input type="text" id="name" />
+        <Label class="mb-0" htmlFor="name" >Cabin name</Label>
+        <Input type="text" id="name" {...register("name",
+          {required:"This field not be empty"}
+        )} />
+        {errors?.name?.message && <Error>{errors.name.message}</Error>}
       </FormRow>
 
       <FormRow>
-        <label class="mb-0"htmlFor="maxCapacity">Maximum capacity</Label>
-        <Input type="number" id="maxCapacity" />
+        <Label class="mb-0" htmlFor="maxCapacity">Maximum capacity</Label>
+        <Input type="number" id="maxCapacity" {...register("maxCapacity", { required: "this field cannot be empty", 
+        min:{value:1,
+            message:"The capacity of cabin atleast 1"
+          }, })} />
+          {errors?.maxCapacity?.message && <Error>{errors.maxCapacity.message}</Error>}
       </FormRow>
 
       <FormRow>
-        <label class="mb-0"htmlFor="regularPrice">Regular price</Label>
-        <Input type="number" id="regularPrice" />
+        <Label class="mb-0" htmlFor="regularPrice">Regular price</Label>
+        <Input type="number" id="regularPrice" {...register("regularPrice", 
+          { required: "this field cannot be empty" })} />
       </FormRow>
 
       <FormRow>
-        <label class="mb-0"htmlFor="discount">Discount</Label>
-        <Input type="number" id="discount" defaultValue={0} />
+        <Label class="mb-0" htmlFor="discount">Discount</Label>
+        <Input type="number" id="discount" defaultValue={0} {...register("discount", { 
+          required: "this field cannot be empty",
+          validate: (value) => value <=  getValues().regularPrice || 
+          'Discount should be less than regular price',
+        })} />
       </FormRow>
 
       <FormRow>
-        <label class="mb-0"htmlFor="description">Description for website</Label>
-        <Textarea type="number" id="description" defaultValue="" />
+        <Label class="mb-0" htmlFor="description">Description for website</Label>
+        <Textarea type="number" id="description" defaultValue="" {...register("description", 
+          { required: "this field cannot be empty" })} />
       </FormRow>
 
       <FormRow>
-        <label class="mb-0"htmlFor="image">Cabin photo</Label>
+        <Label class="mb-0" htmlFor="image">Cabin photo</Label>
         <FileInput id="image" accept="image/*" />
       </FormRow>
 
@@ -80,7 +127,7 @@ function CreateCabinForm() {
         <Button variation="secondary" type="reset">
           Cancel
         </Button>
-        <Button>Edit cabin</Button>
+        <Button disabled={isCreating}>Add cabin</Button>
       </FormRow>
     </Form>
   );
