@@ -11,6 +11,7 @@ import { useState } from "react";
 import CreateCabinForm from "./CreateCabinForm";
 import { useDeleteCabin } from "./useDeleteCabin";
 import { useCabins } from "./useCabins";
+import { useCreateCabin } from "./useCreateCabin";
 
 const TableRow = styled.div`
   display: grid;
@@ -54,6 +55,8 @@ const Discount = styled.div`
 function CabinRow({ cabin }) {
   const [ShowForm, setShowForm] = useState(false);
 
+  const{createCabin,isCreating} = useCreateCabin();
+
   const {
     id: cabinId,
     name,
@@ -61,7 +64,19 @@ function CabinRow({ cabin }) {
     regularPrice,
     discount,
     image,
+    description,
   } = cabin;
+
+  function handleDuplicate () {
+    createCabin({
+      name: `Copy of ${name}`,
+      maxCapacity,
+      regularPrice,
+      discount,
+      image,
+      description,
+    });
+  }
 
   const { isDeleting, deleteCabins } = useDeleteCabin();
 
@@ -78,7 +93,7 @@ function CabinRow({ cabin }) {
           <span>&mdash;</span>
         )}
         <div>
-          <button>
+          <button disabled={isCreating} onClick={handleDuplicate}>
             <HiSquare2Stack />
           </button>
           <button onClick={() => deleteCabins(cabinId)} disabled={isDeleting}>
