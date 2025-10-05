@@ -20,13 +20,20 @@ export default function useBookings() {
   const [field, direction] = sortByRaw.split("-");
   const sortBy = { field, direction };
 
+  // Pagination
+  const page = !searchParams.get("page")
+    ? 1
+    : Number(searchParams.get("page"));
+
   const {
     isLoading,
-    data: getDataOfBookings,
+    data: { data: getDataOfBookings = [], count = 0 } = {},
     error,
   } = useQuery({
-    queryKey: ["booking", filter, sortBy],
-    queryFn: () => getBookings({ filter, sortBy }),
+    queryKey: ["booking", filter, sortBy,page],
+    queryFn: () => getBookings({ filter, sortBy ,page}),
   });
-  return { isLoading, getDataOfBookings, error };
+  console.log("getDataOfBookings:", getDataOfBookings);
+  console.log("count:", count);
+  return { isLoading, getDataOfBookings, error, count };
 }
