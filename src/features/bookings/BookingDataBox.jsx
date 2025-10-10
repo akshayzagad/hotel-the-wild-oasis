@@ -69,7 +69,10 @@ const Guest = styled.div`
   }
 `;
 
-const Price = styled.div`
+// Prevent isPaid from being passed to the DOM
+const Price = styled.div.withConfig({
+  shouldForwardProp: (prop) => prop !== "isPaid",
+})`
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -104,7 +107,6 @@ const Footer = styled.footer`
 
 // A purely presentational component
 function BookingDataBox({ booking }) {
-
   const {
     created_at,
     startDate,
