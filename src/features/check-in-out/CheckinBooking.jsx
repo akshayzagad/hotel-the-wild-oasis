@@ -25,11 +25,11 @@ const Box = styled.div`
 
 function CheckinBooking() {
   const { booking, isLoading } = useBooking();
-  const { checkin, isCheckingIn } = useCheckin();
+  const { checkIn, isCheckingIn } = useCheckin();
   const { settings, isLoading: isSettingsLoading } = useSettings();
 
   const [confirmPaid, setConfirmPaid] = useState(false);
-  const [addBreakfast, setAddBreakfast] = useState();
+  const [addBreakfast, setAddBreakfast] = useState(false);
   const moveBack = useMoveBack();
 
   useEffect(() => setConfirmPaid(booking?.isPaid ?? false), [booking]);
@@ -46,16 +46,23 @@ function CheckinBooking() {
     numNight,
   } = booking;
 
+  const optionalBreakefastPrice = settings.breakFastPrice * numGuest * numNight;
+
   function handleCheckin() {
     if (!confirmPaid) return;
     if (addBreakfast) {
-      checkin();
+      checkIn({
+        bookingId,
+        breakfast: {
+          hasBreakfast: true,
+          extraPrice: optionalBreakefastPrice,
+          totalPrice: totalPrice + optionalBreakefastPrice
+        },
+      });
     } else {
-      checkin(bookingId);
+      checkIn({bookingId , breakfast:{}});
     }
   }
-
-  const optionalBreakefastPrice = settings.breakFastPrice * numGuest * numNight;
 
   return (
     <>
@@ -66,7 +73,7 @@ function CheckinBooking() {
 
       <BookingDataBox booking={booking} />
 
-      {hasBreakfast && (
+      {!hasBreakfast && (
         <Box>
           <Checkbox
             checked={addBreakfast}

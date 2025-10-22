@@ -7,11 +7,16 @@ import Tag from "../../ui/Tag";
 import ButtonGroup from "../../ui/ButtonGroup";
 import Button from "../../ui/Button";
 import ButtonText from "../../ui/ButtonText";
+import Spinner from "../../ui/Spinner";
 
 import { useMoveBack } from "../../hooks/useMoveBack";
 import { useBooking } from "./useBooking";
-import Spinner from "../../ui/Spinner";
+import { useDeleteBooking } from "./useDeleteBooking";
 import { useNavigate } from "react-router-dom";
+import { useCheckOut } from "../check-in-out/useCheckOut";
+import { HiArrowUpOnSquare } from "react-icons/hi2";
+import Modal from "../../ui/Modal";
+import ConfirmDelete from "../../ui/ConfirmDelete";
 
 const HeadingGroup = styled.div`
   display: flex;
@@ -21,6 +26,8 @@ const HeadingGroup = styled.div`
 
 function BookingDetail() {
   const { booking, isLoading } = useBooking();
+  const { isCheckingOut, checkOut } = useCheckOut();
+  const { isDeleting, deleteBookings } = useDeleteBooking();
   const navigate = useNavigate();
 
   // const booking = {};
@@ -55,6 +62,33 @@ function BookingDetail() {
             Check In #{bookingId}
           </Button>
         )}
+        {status === "checked-in" /** If status is checked-in then we want 
+                  to checked-out that customer then use this button */ && (
+          <Button
+            icon={<HiArrowUpOnSquare />}
+            onClick={() => checkOut({ bookingId })}
+            disabled={isCheckingOut}
+          >
+            Check Out
+          </Button>
+        )}
+
+        <Modal>
+          <Modal.Open opens="delete">
+            <Button variation="danger">Delete Booking</Button>
+          </Modal.Open>
+
+          <Modal.Window name="delete">
+            <ConfirmDelete
+              resourceName="booking"
+              disabled={isDeleting}
+              onConfirm={() =>
+                deleteBookings(bookingId, { onSettled: () => navigate(-1) })
+              }
+            />
+          </Modal.Window>
+        </Modal>
+
         <Button variation="secondary" onClick={moveBack}>
           Back
         </Button>
