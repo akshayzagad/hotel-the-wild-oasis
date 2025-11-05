@@ -12,6 +12,7 @@ import PageNotFound from "./pages/PageNotFound";
 import Settings from "./pages/Settings";
 import Users from "./pages/Users";
 import AppLayout from "./ui/AppLayout";
+import ProtectedRoute from "./ui/ProtectedRoute";
 import Booking from "./pages/Booking";
 import Checkin from "./pages/Checkin";
 
@@ -31,7 +32,13 @@ function App() {
       <GlobalStyles />
       <BrowserRouter>
         <Routes>
-          <Route element={<AppLayout />}>
+          <Route
+            element={
+              <ProtectedRoute>
+                <AppLayout />
+              </ProtectedRoute>
+            }
+          >
             <Route
               index
               element={<Navigate replace to={"Dashboard"} />}
@@ -48,25 +55,26 @@ function App() {
           <Route path="*" element={<PageNotFound />}></Route>
         </Routes>
       </BrowserRouter>
-      <Toaster position="top-center"
-       gutter={12} 
-       containerStyle={{ margin: "8px" }} 
-       toastOptions={{
-        success:{
-          duration:3000,
-        },
-        error:{
-          duration:5000,
-        },
-        style:{
-          fontSize:'16px',
-          maxWidth:'500px',
-          padding:"16px 24px",
-          backgroundColor:"var(--color-gray-100)",
-          color:"var(--color-gray-700)",
-        }
-       }}
-       />
+      <Toaster
+        position="top-center"
+        gutter={12}
+        containerStyle={{ margin: "8px" }}
+        toastOptions={{
+          success: {
+            duration: 3000,
+          },
+          error: {
+            duration: 5000,
+          },
+          style: {
+            fontSize: "16px",
+            maxWidth: "500px",
+            padding: "16px 24px",
+            backgroundColor: "var(--color-gray-100)",
+            color: "var(--color-gray-700)",
+          },
+        }}
+      />
     </QueryClientProvider>
   );
 }

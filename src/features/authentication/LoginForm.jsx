@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Button from "../../ui/Button";
 import Form from "../../ui/Form";
-import SpinnerMini from "../../ui/SpinnerMini"
+import SpinnerMini from "../../ui/SpinnerMini";
 import Input from "../../ui/Input";
 import FormRowVertical from "../../ui/FormRowVertical";
 import { useLogin } from "./useLogin";
@@ -15,7 +15,12 @@ function LoginForm() {
   function handleSubmit(e) {
     e.preventDefault();
     if (!email || !password) return;
-    login({ email, password });
+    login({ email, password },{
+      onSettled:()=>{
+        setEmail('');
+        setPassword('');
+      }
+    })
   }
 
   return (
@@ -38,13 +43,13 @@ function LoginForm() {
           autoComplete="current-password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-        disabled={isLogin}
-
+          disabled={isLogin}
         />
       </FormRowVertical>
       <FormRowVertical>
-        
-        <Button size="large" disabled={isLogin} >{!isLogin ? login : <SpinnerMini/>}</Button>
+        <Button size="large" disabled={isLogin}>
+          {!isLogin ? "Log in" : <SpinnerMini />}
+        </Button>
       </FormRowVertical>
     </Form>
   );
