@@ -12,6 +12,7 @@ const FullPage = styled.div`
   justify-content: center;
 `;
 
+// eslint-disable-next-line react/prop-types
 export default function ProtectedRoute({ children }) {
   const navigate = useNavigate();
 
