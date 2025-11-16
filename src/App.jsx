@@ -15,7 +15,8 @@ import AppLayout from "./ui/AppLayout";
 import ProtectedRoute from "./ui/ProtectedRoute";
 import Booking from "./pages/Booking";
 import Checkin from "./pages/Checkin";
-import Account from "./pages/Account"
+import Account from "./pages/Account";
+import { DarkModeProvider } from "./context/DarkModeContext";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -28,6 +29,7 @@ const queryClient = new QueryClient({
 
 function App() {
   return (
+    <DarkModeProvider>
     <QueryClientProvider client={queryClient}>
       <ReactQueryDevtools initialIsOpen={false} />
       <GlobalStyles />
@@ -43,7 +45,7 @@ function App() {
             <Route
               index
               element={<Navigate replace to={"Dashboard"} />}
-            ></Route>
+            />
             <Route path="dashboard" element={<Dashboard />}></Route>
             <Route path="booKings" element={<BooKings />}></Route>
             <Route path="booKings/:bookingId" element={<Booking />}></Route>
@@ -51,7 +53,7 @@ function App() {
             <Route path="cabins" element={<Cabins />}></Route>
             <Route path="settings" element={<Settings />}></Route>
             <Route path="users" element={<Users />}></Route>
-            <Route path="account" element={<Account/>}/>
+            <Route path="account" element={<Account />} />
           </Route>
           <Route path="login" element={<Login />}></Route>
           <Route path="*" element={<PageNotFound />}></Route>
@@ -78,6 +80,7 @@ function App() {
         }}
       />
     </QueryClientProvider>
+    </DarkModeProvider>
   );
 }
 
