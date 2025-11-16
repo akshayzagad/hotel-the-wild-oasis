@@ -10,10 +10,15 @@ export function useLogin() {
   const { mutate: login, isLoading: isLogin } = useMutation({
     mutationFn: ({ email, password }) => loginApi({ email, password }),
 
-    onSuccess: (user) => {
-      queryClient.setQueriesData(["user"].user);
-      navigate("/dashboard", { replace: true });
+    onSuccess: (data) => {
+      queryClient.setQueryData(["user"],data.user);
+      toast.success("Login successful!");
+       // slight delay ensures Supabase session is available
+      setTimeout(() => {
+        navigate("/dashboard", { replace: true });
+      }, 300);
     },
+    
 
     onError: (err) => {
       console.log("Error", err);
