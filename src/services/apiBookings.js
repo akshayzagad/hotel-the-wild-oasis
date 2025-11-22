@@ -3,7 +3,6 @@ import supabase from "./supabase";
 import { PAGE_SIZE } from "../utils/constant";
 
 export async function getBookings({ filter, sortBy, page }) {
-  
   let query = supabase
     .from("booking")
     .select(
@@ -52,7 +51,7 @@ export async function getBooking(id) {
   return data;
 }
 
-// Returns all BOOKINGS that are were created after the given date. 
+// Returns all BOOKINGS that are were created after the given date.
 // Useful to get bookings created in the last 30 days, for example.
 export async function getBookingsAfterDate(date) {
   const { data, error } = await supabase
@@ -72,9 +71,9 @@ export async function getBookingsAfterDate(date) {
 // Returns all STAYS that are were created after the given date
 export async function getStaysAfterDate(date) {
   const { data, error } = await supabase
-    .from("bookings")
+    .from("booking")
     // .select('*')
-    .select("*, guests(fullName)")
+    .select("*, guest(fullName)")
     .gte("startDate", date)
     .lte("startDate", getToday());
 
@@ -89,14 +88,15 @@ export async function getStaysAfterDate(date) {
 // Activity means that there is a check in or a check out today
 export async function getStaysTodayActivity() {
   const { data, error } = await supabase
-    .from("bookings")
-    .select("*, guests(fullName, nationality, countryFlag)")
+    .from("booking")
+    .select("*, guest(fullName, nationality, countryFlag)")
     .or(
       `and(status.eq.unconfirmed,startDate.eq.${getToday()}),and(status.eq.checked-in,endDate.eq.${getToday()})`
     )
     .order("created_at");
 
-  // Equivalent to this. But by querying this, we only download the data we actually need, otherwise we would need ALL bookings ever created
+  // Equivalent to this. But by querying this, we only download the data we actually need,
+  //  otherwise we would need ALL bookings ever created
   // (stay.status === 'unconfirmed' && isToday(new Date(stay.startDate))) ||
   // (stay.status === 'checked-in' && isToday(new Date(stay.endDate)))
 
