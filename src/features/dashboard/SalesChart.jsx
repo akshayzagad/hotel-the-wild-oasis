@@ -59,6 +59,7 @@ const StyledSalesChart = styled(DashboardBox)`
 // ];
 
 export default function SalesChart({ dateBookings, numDays }) {
+  
   const { isDarkMode } = useDarkMode();
 
   const allDates = eachDayOfInterval({
