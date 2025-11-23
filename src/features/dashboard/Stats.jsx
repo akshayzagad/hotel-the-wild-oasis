@@ -9,10 +9,10 @@ import {
 import { formatCurrency } from "../../utils/helpers";
 
 export default function Stats({
-  dateBookings,
-  confirmedStays,
-  numDays,
-  cabinCount,
+  dateBookings = [],
+  confirmedStays = [],
+  numDays = 0,
+  cabinCount = 0,
 }) {
   const numDateBookings = dateBookings.length;
 
