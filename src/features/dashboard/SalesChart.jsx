@@ -59,7 +59,6 @@ const StyledSalesChart = styled(DashboardBox)`
 // ];
 
 export default function SalesChart({ dateBookings, numDays }) {
-  
   const { isDarkMode } = useDarkMode();
 
   const allDates = eachDayOfInterval({
@@ -73,7 +72,7 @@ export default function SalesChart({ dateBookings, numDays }) {
       totalSales: dateBookings
         .filter((bookings) => isSameDay(date, new Date(bookings.created_at)))
         .reduce((acc, cur) => acc + cur.totalPrice, 0),
-         extrasSales: dateBookings
+      extrasSales: dateBookings
         .filter((bookings) => isSameDay(date, new Date(bookings.created_at)))
         .reduce((acc, cur) => acc + cur.extraPrice, 0),
     };
@@ -95,7 +94,10 @@ export default function SalesChart({ dateBookings, numDays }) {
 
   return (
     <StyledSalesChart>
-      <Heading as="h2">Sales</Heading>
+      <Heading as="h2">
+        Sales from {format(allDates.at(0), "MMM dd yyyy")} &mdash;
+        {format(allDates.at(-1), "MMM dd yyyy")}
+      </Heading>
       <ResponsiveContainer height={300} width="100%">
         <AreaChart data={data}>
           <XAxis
@@ -126,7 +128,7 @@ export default function SalesChart({ dateBookings, numDays }) {
             stroke={colors.extrasSales.stroke}
             fill={colors.extrasSales.fill}
             strokeWidth={2}
-            name="Total Sales"
+            name="Total Extras Sales"
             unit="$"
           />
         </AreaChart>
