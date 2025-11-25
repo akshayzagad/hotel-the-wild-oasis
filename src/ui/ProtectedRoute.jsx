@@ -22,20 +22,27 @@ export default function ProtectedRoute({ children }) {
 
   //2}If there no Authenticated user return to the login page
 
-  useEffect(function () {
-    if (!isAuthenticated && isLoading) navigate("/login");
-  }, [isAuthenticated,isLoading,navigate]);
+  useEffect(
+    function () {
+      if (!isAuthenticated && !isLoading) navigate("/login");
+    },
+    [isAuthenticated, isLoading, navigate]
+  );
 
   //3}while loading , show a spinner
 
-  if (isLoading)
+  if (isLoading) {
     return (
       <FullPage>
         <Spinner />
       </FullPage>
     );
+  }
 
   //4} if there user then render the app
 
-  if(isAuthenticated) return children;
+  if (isAuthenticated) return children;
+
+  // Otherwise return null to avoid rendering flashes
+  return null;
 }

@@ -70,11 +70,11 @@ import useOutsideClick from "../hooks/useOutsideClick";
 const MenuContext = createContext();
 
 export default function Menus({ children }) {
-  const [openId, setOpenId] = useState("");
+  const [openId, setOpenId] = useState(null);
   const [position, setPosition] = useState(null);
 
   const open = setOpenId;
-  const close = () => setOpenId("");
+  const close = () => setOpenId(null);
 
   return (
     <MenuContext.Provider
@@ -89,13 +89,18 @@ function Toggle({ id }) {
   const { openId, close, open, setPosition } = useContext(MenuContext);
 
   function handleClick(e) {
+    e.stopPropagation();
+
     const rect = e.target.closest("button").getBoundingClientRect();
     setPosition({
       x: window.innerWidth - rect.width - rect.x,
       y: rect.y + rect.height + 8,
     });
 
-    openId === "" || openId !== id ? open(id) : close();
+    // openId === "" || openId !== id ? open(id) : close();
+    // FIXED toggle logic
+    if (openId === id) close();
+    else open(id);
   }
 
   return (
@@ -106,11 +111,20 @@ function Toggle({ id }) {
 }
 
 function List({ id, children }) {
-  const { openId, position,close } = useContext(MenuContext);
-  const ref = useOutsideClick({ handler: close })
+  const { openId, position, close } = useContext(MenuContext);
+  // const ref = useOutsideClick({ handler: close });
+  const ref = useOutsideClick({
+    handler: () => {
+      close();
+    },
+    listenCapturing: false,
+  });
+
   if (openId !== id) return null;
   return createPortal(
-    <StyledList position={position} ref={ref}>{children}</StyledList>,
+    <StyledList position={position} ref={ref}>
+      {children}
+    </StyledList>,
     document.body
   );
 }
