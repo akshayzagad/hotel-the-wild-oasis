@@ -60,7 +60,6 @@ const PaginationButton = styled.button`
   }
 `;
 
-
 export default function Pagination({ count }) {
   const [searchParams, setSearchParams] = useSearchParams();
 
